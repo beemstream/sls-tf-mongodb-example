@@ -12,7 +12,9 @@
   "dependencies": {
     "@middy/core": "^2.5.3",
     "@middy/http-json-body-parser": "^2.5.3",
-    "mongodb": "^4.4.1"
+    "mongodb": "^4.4.1",
+    "pino": "^7.8.0",
+    "pino-lambda": "^3.0.0"
   },
   "devDependencies": {
     "@serverless/typescript": "^3.0.0",
