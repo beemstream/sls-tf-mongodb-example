@@ -1,4 +1,5 @@
 resource "aws_s3_bucket_object" "zipped_lambda" {
+  count  = length(local.lambda_function_name)
   bucket = "${aws_s3_bucket.lambda_storage.bucket}"
   key    = "hello.zip"
   source = "../.serverless/hello.zip"
@@ -10,12 +11,14 @@ resource "aws_s3_bucket" "lambda_storage" {
 }
 
 resource "aws_lambda_function" "service" {
-  function_name = "tf-${var.name}"
+  count         = length(local.lambda_function_name)
+  function_name = "tf-${local.lambda_function_name[count.index]}"
+  memory_size = local.lambdas_yml[local.lambda_function_name[count.index]].memory_size
 
   s3_bucket = "${aws_s3_bucket.lambda_storage.bucket}"
-  s3_key    = "${aws_s3_bucket_object.zipped_lambda.key}"
+  s3_key    = "${aws_s3_bucket_object.zipped_lambda[count.index].key}"
 
-  handler = "src/functions/hello/handler.main"
+  handler = "src/functions/${local.lambda_function_name[count.index]}/handler.main"
   runtime = "nodejs14.x"
   role    = "${aws_iam_role.service.arn}"
 

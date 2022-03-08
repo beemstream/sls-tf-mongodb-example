@@ -15,6 +15,7 @@ provider:
 functions:
   hello:
     handler: src/functions/hello/handler.main
+    memory_size: 1024
     events:
     - http:
         method: post
