@@ -13,7 +13,7 @@ resource "aws_s3_bucket" "lambda_storage" {
 resource "aws_lambda_function" "service" {
   count         = length(local.lambda_function_name)
   function_name = "tf-${local.lambda_function_name[count.index]}"
-  memory_size = local.lambdas_yml[local.lambda_function_name[count.index]].memory_size
+  memory_size   = local.lambdas_yml[local.lambda_function_name[count.index]].memory_size
 
   s3_bucket = "${aws_s3_bucket.lambda_storage.bucket}"
   s3_key    = "${aws_s3_bucket_object.zipped_lambda[count.index].key}"

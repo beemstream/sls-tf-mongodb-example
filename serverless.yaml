@@ -18,7 +18,7 @@ functions:
     memory_size: 1024
     events:
     - http:
-        method: post
+        method: POST
         path: hello
         request:
           schemas:
