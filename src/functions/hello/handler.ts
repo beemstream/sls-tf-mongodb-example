@@ -14,7 +14,7 @@ const hello: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event, c
 
   const result = await connected.db().collection('settings').insertOne({ foo: 'bar' });
 
-  console.log('Connected successfully');
+  logger.info('Connected successfully');
   return formatJSONResponse({
     result
   });

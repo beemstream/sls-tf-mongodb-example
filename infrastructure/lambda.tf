@@ -1,9 +1,9 @@
-resource "aws_s3_bucket_object" "zipped_lambda" {
+resource "aws_s3_object" "zipped_lambda" {
   count  = length(local.lambda_function_name)
-  bucket = "${aws_s3_bucket.lambda_storage.bucket}"
-  key    = "hello.zip"
-  source = "../.serverless/hello.zip"
-  etag   = filemd5("../.serverless/hello.zip")
+  bucket = aws_s3_bucket.lambda_storage.bucket
+  key    = "${local.lambda_function_name[count.index]}.zip"
+  source = "../.serverless/${local.lambda_function_name[count.index]}.zip"
+  etag   = filemd5("../.serverless/${local.lambda_function_name[count.index]}.zip")
 }
 
 resource "aws_s3_bucket" "lambda_storage" {
@@ -15,12 +15,12 @@ resource "aws_lambda_function" "service" {
   function_name = "tf-${local.lambda_function_name[count.index]}"
   memory_size   = local.lambdas_yml[local.lambda_function_name[count.index]].memory_size
 
-  s3_bucket = "${aws_s3_bucket.lambda_storage.bucket}"
-  s3_key    = "${aws_s3_bucket_object.zipped_lambda[count.index].key}"
+  s3_bucket = aws_s3_bucket.lambda_storage.bucket
+  s3_key    = aws_s3_object.zipped_lambda[count.index].key
 
   handler = "src/functions/${local.lambda_function_name[count.index]}/handler.main"
   runtime = "nodejs14.x"
-  role    = "${aws_iam_role.service.arn}"
+  role    = aws_iam_role.service.arn
 
   vpc_config {
     subnet_ids         = module.vpc.public_subnets
@@ -56,7 +56,7 @@ EOF
 
 resource "aws_iam_role_policy" "service" {
   name = "tf-${var.name}"
-  role = "${aws_iam_role.service.id}"
+  role = aws_iam_role.service.id
 
   policy = <<EOF
 {
@@ -98,6 +98,6 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "service" {
-  role       = "${aws_iam_role.service.name}"
-  policy_arn = "${aws_iam_policy.service.arn}"
+  role       = aws_iam_role.service.name
+  policy_arn = aws_iam_policy.service.arn
 }
