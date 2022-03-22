@@ -10,11 +10,14 @@ const hello: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event, c
   logger.withRequest(event, context);
 
   const client = new MongoClient(process.env.DB_CONNECTION_STRING, { retryWrites: false });
+
   const connected = await client.connect();
 
+  console.log('Inserting Item Now');
   const result = await connected.db().collection('settings').insertOne({ foo: 'bar' });
 
   logger.info('Connected successfully');
+
   return formatJSONResponse({
     result
   });

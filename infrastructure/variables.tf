@@ -3,7 +3,7 @@ variable "region" {
 }
 
 variable "name" {
-  default = "chart-settings"
+  default = "chart-settings-foo"
 }
 
 variable "docdb_instance_class" {
